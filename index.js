@@ -1,7 +1,30 @@
-var shell = require('shelljs');
+var fetch = require('node-fetch');
+var i = 1;
 
-shell.exec('urlcheck "http://www.mit.edu"', function(code, stdout, stderr) {
-  console.log('Exit code:', code);
-  console.log('Program output:', stdout);
-  console.log('Program stderr:', stderr);
-});
+
+function walker(i){
+  // build url
+  i = ('000'+i).slice(-3);
+  var url = 'https://sambergconferencecenter.mit.edu/wp-content/uploads/2016/02/' + i  + '.jpg'
+
+  fetch(url).then(function(response) {
+    //console.log(response.status); // debugging
+
+    // if found write url to console
+    if(response.status === 404){
+        console.log('404: not found');
+    }
+    else{
+	console.log(response.status + ': ' + response.url);
+    }
+
+    // wait 10 secs then call next image
+    setTimeout(function(){
+      i++;
+      walker(i);
+    },1000);
+
+  });
+}
+walker(i);
+
